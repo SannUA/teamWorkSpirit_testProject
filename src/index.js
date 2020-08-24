@@ -3,10 +3,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { ThemeProvider, CSSReset} from '@chakra-ui/core'
+import User from './User';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider>
+    <CSSReset />
+    <BrowserRouter>
+      <Route exact path="/" component={App} />
+      <Route path="/user/:id" component={User} />
+    </BrowserRouter>
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

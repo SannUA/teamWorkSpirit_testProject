@@ -28,6 +28,37 @@
   color: #61dafb;
 }
 
+.eachUserCard {
+  width: 100%;
+  display: inline-block;
+  margin-bottom: 10%;
+
+}
+.eachUserCard h3{
+  font-size: 30px;
+  font-weight: bold;
+}
+.eachUserCard h5{
+  font-size: 20px;
+  font-style: italic;
+}
+
+
+@media (min-width: 350px) {
+  .eachUserCard {
+    width: 50%;
+  }
+}
+@media (min-width: 560px) {
+  .eachUserCard {
+    width: 30%;
+  }
+}
+@media (min-width: 850px) {
+  .eachUserCard {
+    width: 20%;
+  }
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
