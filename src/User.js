@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
+import api from "./api";
 import { Link } from 'react-router-dom'
 import { useDisclosure } from "react-use-disclosure"
-import api from "./api";
 import { useParams } from "react-router-dom";
-import { Avatar } from "@chakra-ui/core";
-import { Button, ButtonGroup } from "@chakra-ui/core";
 import {FaTools} from "react-icons/fa";
 import {ImCross} from "react-icons/im";
-import { CSSReset} from '@chakra-ui/core';
-import { useToast } from "@chakra-ui/core";
-import { Icon } from "@chakra-ui/core";
 import {
+  Avatar,
+  useToast,
+  Icon,
+  Button, 
+  ButtonGroup,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -107,7 +107,6 @@ console.log(userInfo)
       <h2>{userInfo.role}</h2>
       <Avatar name={userInfo.name} src={userInfo.picture} size='2xl'/>
       <div>
-        <CSSReset />
       <ButtonGroup spacing={5}>
         <Button leftIcon={FaTools} 
                 variantColor="yellow"  
@@ -117,11 +116,9 @@ console.log(userInfo)
                 }}>
         Edit
         </Button>
-        <Popover>
+      <Popover>
           <PopoverTrigger>
-          <Button leftIcon={ImCross} variantColor="red" variant="outline">
-            Delete
-          </Button>
+            <Button leftIcon={ImCross} variantColor="red" variant="outline">Delete</Button>
           </PopoverTrigger>
         <PopoverContent zIndex={4} className='popoverText'>
           <PopoverArrow />
@@ -133,9 +130,9 @@ console.log(userInfo)
           Delete
           </Button>
         </PopoverContent>
-</Popover>
-        
-      </ButtonGroup>
+      </Popover> 
+    </ButtonGroup>
+      
       <Modal
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}

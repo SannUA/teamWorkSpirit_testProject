@@ -42,7 +42,8 @@ function App() {
       name: addingUser.name,
       role: addingUser.role,
       picture: addingUser.picture
-    }).then(() => {
+    })
+    .then(() => {
       toast({
         title: "User was added",
         status: "success",
@@ -53,13 +54,17 @@ function App() {
         document.location.pathname ='/'
       }, 500)
     })
-  } }
+    .catch(e => {
+      console.log(`Axios POST request failed: ${e}`)
+    })
+  }}
+
   useEffect(() => {
     api.get("/users").then((res) => {
       setUsers(res.data)
     })
   }, [])
-  console.log(addingUser)
+
   return (
 
       <div className="App">
@@ -71,9 +76,7 @@ function App() {
              <h4>{user.email}</h4>
              <h5>{user.role}</h5>  
              <Link to={`/user/${user.id}`}><Avatar name={user.name} src={user.picture} size='2xl'/></Link>
-          </div>
-        )
-       )
+          </div>))
      }
         </div>
         <Button
@@ -90,13 +93,13 @@ function App() {
            
            
     <Modal
-        isOpen={isOpen}
-        onClose={close}>
+      isOpen={isOpen}
+      onClose={close}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add User's info here, please</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
+          <ModalContent>
+            <ModalHeader>Add User's info here, please</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
            
             <FormControl >
               <FormLabel>E-mail</FormLabel>
