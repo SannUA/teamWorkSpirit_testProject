@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDisclosure } from "react-use-disclosure";
+import { connect, useDispatch, useSelector } from 'react-redux';
 import './App.css';
-import api from './api';
 import { Link } from 'react-router-dom';
 import { 
          Avatar, 
@@ -18,17 +18,18 @@ import {
          FormLabel,
          useToast
         } from "@chakra-ui/core";
+import { fetchUsers, addUser, addUserInfo, cleanUserInfo, cleanCurrentUserInfo } from './redux/actions';
 
 
-function App() {
+function App(props) {
 
-  const [users, setUsers] = useState([]);
-  const [addingUser, setAddingUser] = useState({})
+  const dispatch = useDispatch()
+  const fetchedUsers = useSelector(state => state.users)
   const toast = useToast();
   const { isOpen, open, close } = useDisclosure();
 
   const addingNewUserHandler = () => {
-    if(!addingUser.email || !addingUser.name || !addingUser.role || !addingUser.picture) {
+    if(!props.addingUser.email || !props.addingUser.name || !props.addingUser.role|| !props.addingUser.picture) {
       toast({
         title: "Uncorrect adding",
         description: "Fill in all fields for correct adding the new user, please",
@@ -37,13 +38,8 @@ function App() {
         isClosable: true,
       })
   } else {
-    api.post("/users", {
-      email: addingUser.email,
-      name: addingUser.name,
-      role: addingUser.role,
-      picture: addingUser.picture
-    })
-    .then(() => {
+
+    dispatch(addUser(props.addingUser))
       toast({
         title: "User was added",
         status: "success",
@@ -52,25 +48,20 @@ function App() {
       })
       setTimeout(() => {
         document.location.pathname ='/'
-      }, 500)
-    })
-    .catch(e => {
-      console.log(`Axios POST request failed: ${e}`)
-    })
+      }, 1500)
   }}
 
   useEffect(() => {
-    api.get("/users").then((res) => {
-      setUsers(res.data)
-    })
+    dispatch(fetchUsers())
+    dispatch(cleanCurrentUserInfo())
   }, [])
-
+console.log(props)
   return (
 
       <div className="App">
         <div className='usersList'>
         {
-       users.map(user => (
+       fetchedUsers.map(user => (
           <div className='eachUserCard' key={user.id}>
             <Link to={`/user/${user.id}`}><h3>{user.name}</h3></Link>
              <h4>{user.email}</h4>
@@ -87,7 +78,7 @@ function App() {
           borderColor="green.500"
           marginBottom='10%'
           onClick={() => {
-            setAddingUser({})
+            dispatch(cleanUserInfo())
             setTimeout(open)
           }}>Add more User</Button>
            
@@ -103,34 +94,30 @@ function App() {
            
             <FormControl >
               <FormLabel>E-mail</FormLabel>
-              <Input placeholder='E-mail' onChange={(e) => {setAddingUser({
-                ...addingUser,
-                email: e.target.value
-              })}}/>
+              <Input placeholder='E-mail' onChange={(e) => {
+                dispatch(addUserInfo('email', e.target.value))
+              }}/>
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Name</FormLabel>
-              <Input placeholder='Name' onChange={(e) => {setAddingUser({
-                ...addingUser,
-                name: e.target.value
-              })}}/>
+              <Input placeholder='Name' onChange={(e) => {
+                dispatch(addUserInfo('name', e.target.value))
+              }}/>
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Role</FormLabel>
-              <Input placeholder='Role' onChange={(e) => {setAddingUser({
-                ...addingUser,
-                role: e.target.value
-              })}}/>
+              <Input placeholder='Role' onChange={(e) => {
+                dispatch(addUserInfo('role', e.target.value))
+              }}/>
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Picture</FormLabel>
-              <Input placeholder="Picture's link" onChange={(e) => {setAddingUser({
-                ...addingUser,
-                picture: e.target.value
-              })}}/>
+              <Input placeholder="Picture's link" onChange={(e) => {
+                dispatch(addUserInfo('picture', e.target.value))
+              }}/>
             </FormControl>
           </ModalBody>
 
@@ -148,4 +135,10 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = state => {
+  console.log(state)
+  return {
+    addingUser: state.addingUserInfo
+  }
+}
+export default connect(mapStateToProps)(App);

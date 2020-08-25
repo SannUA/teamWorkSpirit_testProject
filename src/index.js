@@ -1,21 +1,34 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
+import { ThemeProvider, CSSReset} from '@chakra-ui/core';
+import { createStore, compose, applyMiddleware } from 'redux';
+import { reducer } from './redux/reducer';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { BrowserRouter, Route } from 'react-router-dom';
-import { ThemeProvider, CSSReset} from '@chakra-ui/core'
 import User from './User';
+
+const store = createStore(reducer, compose(
+  applyMiddleware(
+    thunk
+  ),
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+))
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider>
-    <CSSReset />
-    <BrowserRouter>
-      <Route exact path="/" component={App} />
-      <Route path="/user/:id" component={User} />
-    </BrowserRouter>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider>
+        <CSSReset />
+        <BrowserRouter>
+          <Route exact path="/" component={App} />
+          <Route path="/user/:id" component={User} />
+        </BrowserRouter>
+      </ThemeProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

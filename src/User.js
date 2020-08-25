@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import api from "./api";
 import { Link } from 'react-router-dom'
 import { useDisclosure } from "react-use-disclosure"
 import { useParams } from "react-router-dom";
+import { connect, useDispatch } from 'react-redux';
 import {FaTools} from "react-icons/fa";
 import {ImCross} from "react-icons/im";
 import {
@@ -30,9 +31,11 @@ import {
   FormLabel,
 } from "@chakra-ui/core";
 import './User.css'
+import { currentUser, addUserInfo, editUserInfoInForm } from "./redux/actions";
 
-const User = () => {
+const User = (props) => {
 
+  const dispatch = useDispatch()
   const { isOpen, open, close } = useDisclosure();
 
   const initialRef = React.useRef();
@@ -41,7 +44,6 @@ const User = () => {
 
 
   const {id} = useParams();
-  const [userInfo, setUserInfo]  = useState(null);
 
   const deletingUserHandler = () => {
     api.delete(`/users/${id}`)
@@ -63,7 +65,10 @@ const User = () => {
   }
 
   const formSubmitHandler = () => {
-    if (!userInfo.email || !userInfo.name || !userInfo.role || !userInfo.picture) {
+    if (!props.usersEditingInfo.email || 
+        !props.usersEditingInfo.name || 
+        !props.usersEditingInfo.role || 
+        !props.usersEditingInfo.picture) {
       toast({
         title: "Uncorrect changes",
         description: "Fill in all fields for correct changes, please",
@@ -74,10 +79,12 @@ const User = () => {
     } else {
       try {
         api.put(`/users/${id}`, { 
-            email: userInfo.email,
-            name: userInfo.name,
-            role: userInfo.role,
-            picture: userInfo.picture
+            email: props.usersEditingInfo.email,
+            name: props.usersEditingInfo.name,
+            role: props.usersEditingInfo.role,
+            picture: props.usersEditingInfo.picture
+        }).then(()=> {
+          window.location.reload()
         })
         
       } catch (e) {
@@ -88,30 +95,28 @@ const User = () => {
   }
 
   useEffect(() => {
-    api.get(`/users/${id}`).then(res => {
-      setUserInfo(res.data)
-    })
+    dispatch(currentUser(id))
   }, [id])
 
-  if (!userInfo) return (
+  if (!props.currentUserInfo.name) return (
     <div>Loading...</div>
   )
-console.log(userInfo)
   return (
     <div className='userSinglePage'>
       <Link to='/'>
         <Icon name="arrow-left" size="32px" color="black" className='arrowBack'/>
       </Link>
-      <h1>{userInfo.email}</h1>
-      <h2>{userInfo.name}</h2>
-      <h2>{userInfo.role}</h2>
-      <Avatar name={userInfo.name} src={userInfo.picture} size='2xl'/>
+      <h1>{props.currentUserInfo.email}</h1>
+      <h2>{props.currentUserInfo.name}</h2>
+      <h2>{props.currentUserInfo.role}</h2>
+      <Avatar name={props.currentUserInfo.name} src={props.currentUserInfo.picture} size='2xl'/>
       <div>
       <ButtonGroup spacing={5}>
         <Button leftIcon={FaTools} 
                 variantColor="yellow"  
                 variant="outline" 
                 onClick={() => {
+                  dispatch(editUserInfoInForm())
                   setTimeout(open)
                 }}>
         Edit
@@ -147,34 +152,30 @@ console.log(userInfo)
            
             <FormControl >
               <FormLabel>E-mail</FormLabel>
-              <Input ref={initialRef} value={userInfo.email} onChange={(e) => {setUserInfo({
-                ...userInfo,
-                email: e.target.value
-              })}}/>
+              <Input ref={initialRef} value={props.usersEditingInfo.email} onChange={(e) => {
+                dispatch(addUserInfo('email', e.target.value))
+              }}/>
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Name</FormLabel>
-              <Input value={userInfo.name} onChange={(e) => {setUserInfo({
-                ...userInfo,
-                name: e.target.value
-              })}}/>
+              <Input value={props.usersEditingInfo.name} onChange={(e) => {
+                dispatch(addUserInfo('name', e.target.value))
+              }}/>
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Role</FormLabel>
-              <Input value={userInfo.role} onChange={(e) => {setUserInfo({
-                ...userInfo,
-                role: e.target.value
-              })}}/>
+              <Input value={props.usersEditingInfo.role} onChange={(e) => {
+                dispatch(addUserInfo('role', e.target.value))
+              }}/>
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Picture</FormLabel>
-              <Input value={userInfo.picture} onChange={(e) => {setUserInfo({
-                ...userInfo,
-                picture: e.target.value
-              })}}/>
+              <Input value={props.usersEditingInfo.picture} onChange={(e) => {
+                dispatch(addUserInfo('picture', e.target.value))
+              }}/>
             </FormControl>
           </ModalBody>
 
@@ -192,4 +193,10 @@ console.log(userInfo)
   )
 }
 
-export default User;
+const mapStateToProps = state => {
+  return {
+    usersEditingInfo: state.addingUserInfo,
+    currentUserInfo: state.currentUser
+  }
+}
+export default connect(mapStateToProps)(User);
