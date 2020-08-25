@@ -16,7 +16,8 @@ import {
          Input,
          FormControl,
          FormLabel,
-         useToast
+         useToast,
+         Spinner
         } from "@chakra-ui/core";
 import { fetchUsers, addUser, addUserInfo, cleanUserInfo, cleanCurrentUserInfo } from './redux/actions';
 
@@ -55,7 +56,18 @@ function App(props) {
     dispatch(fetchUsers())
     dispatch(cleanCurrentUserInfo())
   }, [])
-console.log(props)
+if (props.loading) {
+    return (
+      <div className="App">
+          <Spinner 
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl" />
+      </div>
+    )
+} 
   return (
 
       <div className="App">
@@ -136,9 +148,9 @@ console.log(props)
 }
 
 const mapStateToProps = state => {
-  console.log(state)
   return {
-    addingUser: state.addingUserInfo
+    addingUser: state.addingUserInfo,
+    loading: state.loading
   }
 }
 export default connect(mapStateToProps)(App);

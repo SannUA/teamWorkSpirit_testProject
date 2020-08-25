@@ -29,6 +29,7 @@ import {
   Input,
   FormControl,
   FormLabel,
+  Spinner,
 } from "@chakra-ui/core";
 import './User.css'
 import { currentUser, addUserInfo, editUserInfoInForm } from "./redux/actions";
@@ -99,7 +100,14 @@ const User = (props) => {
   }, [id])
 
   if (!props.currentUserInfo.name) return (
-    <div>Loading...</div>
+    <div>
+      <Spinner 
+        thickness="4px"
+        speed="0.65s"
+        emptyColor="gray.200"
+        color="blue.500"
+        size="xl" />
+    </div>
   )
   return (
     <div className='userSinglePage'>

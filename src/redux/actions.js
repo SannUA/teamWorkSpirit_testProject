@@ -1,22 +1,18 @@
 import api from "../api"
-import { FETCH_USERS, 
+import { 
          ADDING_USER_INFO, 
          CLEANING_USER_INFO, 
          CURRENT_USER, 
-         CLEANING_CURRENT_USER_INFO, 
+         CLEANING_CURRENT_USER_INFO,
+         REQUEST_USERS, 
          EDIT_USER_INFO_IN_FORM } from "./types"
 
 
 
 export function fetchUsers() {
-   
-    return async dispatch => {
-        
-        await api.get("/users").then((res) => {
-            dispatch({ type: FETCH_USERS, payload: res.data})
-        })
-    }
-}
+   return {
+       type: REQUEST_USERS
+   }}
 
 export function addUser(data) {
     return async dispatch => {

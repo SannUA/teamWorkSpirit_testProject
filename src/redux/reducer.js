@@ -2,6 +2,7 @@ import { FETCH_USERS, ADDING_USER_INFO, CLEANING_USER_INFO, CURRENT_USER, CLEANI
 
 const initialState = {
     users: [],
+    loading: true,
     addingUserInfo: {
         email: null,
         name: null,
@@ -20,7 +21,7 @@ const initialState = {
 export const reducer = (state = initialState, action) => {
     switch(action.type) {
         case FETCH_USERS: return {
-            ...state, users: action.payload
+            ...state, users: action.payload, loading: false
         }
         case CLEANING_USER_INFO: return {
             ...state, addingUserInfo: {}
