@@ -11,7 +11,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import User from './User';
-import { sagaWatcher } from './redux/sagas';
+import rootSaga from './redux/sagasRoot';
 
 const saga = createSagaMidleware()
 
@@ -22,7 +22,7 @@ const store = createStore(reducer, compose(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 ))
 
-saga.run(sagaWatcher)
+saga.run(rootSaga)
 
 ReactDOM.render(
   <React.StrictMode>

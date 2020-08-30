@@ -32,7 +32,7 @@ import {
   Spinner,
 } from "@chakra-ui/core";
 import './User.css';
-import { currentUser, addUserInfo, editUserInfoInForm } from "./redux/actions";
+import { currentUser, addUserInfo, editUserInfoInForm, deleteUser } from "./redux/actions";
 
 const User = (props) => {
 
@@ -47,21 +47,23 @@ const User = (props) => {
   const {id} = useParams();
 
   const deletingUserHandler = () => {
-    api.delete(`/users/${id}`)
-    .then(() => {
-      toast({
-        title: "User was deleted",
-        status: "info",
-        duration: 9000,
-        isClosable: true,
-      })
-      setTimeout(() => {
-        props.history.replace('/')
-      }, 1000)
-    })
-    .catch(e => {
-      console.log(`😱 Axios request failed: ${e}`)
-    })
+
+    dispatch(deleteUser(id))
+    // api.delete(`/users/${id}`)
+    // .then(() => {
+    //   toast({
+    //     title: "User was deleted",
+    //     status: "info",
+    //     duration: 9000,
+    //     isClosable: true,
+    //   })
+    //   setTimeout(() => {
+    //     props.history.replace('/')
+    //   }, 1000)
+    // })
+    // .catch(e => {
+    //   console.log(`😱 Axios request failed: ${e}`)
+    // })
     
   }
 
@@ -97,7 +99,7 @@ const User = (props) => {
 
   useEffect(() => {
     dispatch(currentUser(id))
-  }, [id])
+  }, [dispatch, id])
 
   if (!props.currentUserInfo.name) return (
     <div>
@@ -108,7 +110,10 @@ const User = (props) => {
         color="blue.500"
         size="xl" />
     </div>
-  )
+)
+if (props.userWasDeleted) {
+  props.history.replace('/')
+}
   return (
     <div className='userSinglePage'>
       <Link to='/'>
@@ -204,7 +209,8 @@ const User = (props) => {
 const mapStateToProps = state => {
   return {
     usersEditingInfo: state.addingUserInfo,
-    currentUserInfo: state.currentUser
+    currentUserInfo: state.currentUser,
+    userWasDeleted: state.userWasDeleted
   }
 }
 export default connect(mapStateToProps)(User);

@@ -4,15 +4,32 @@ import {
          CLEANING_USER_INFO, 
          CURRENT_USER, 
          CLEANING_CURRENT_USER_INFO,
-         REQUEST_USERS, 
-         EDIT_USER_INFO_IN_FORM } from "./types"
+         EDIT_USER_INFO_IN_FORM, 
+         FETCH_USERS_REQUEST,
+         CREATE_USER_REQUEST,
+         FETCH_CURRENT_USER_REQUEST,
+         DELETE_CURRENT_USER_REQUEST} from "./types"
 
 
 
 export function fetchUsers() {
    return {
-       type: REQUEST_USERS
+       type: FETCH_USERS_REQUEST
    }}
+
+export function createUser(data) {
+    return {
+      type: CREATE_USER_REQUEST,
+      payload: data,
+    };
+  }
+
+export function deleteUser(id) {
+    return {
+      type: DELETE_CURRENT_USER_REQUEST,
+      payload: id,
+    };
+  }
 
 export function addUser(data) {
     return async dispatch => {
@@ -50,10 +67,10 @@ export function cleanCurrentUserInfo() {
 }
 
 export function currentUser(id) {
-    return async dispatch => {
-        await api.get(`/users/${id}`).then((res) => {
-            dispatch({ type: CURRENT_USER, payload: res.data})
-        })
-    }
+    return {
+        type: FETCH_CURRENT_USER_REQUEST,
+        payload: id,
+      };
+
 }
 

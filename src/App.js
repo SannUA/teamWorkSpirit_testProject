@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDisclosure } from "react-use-disclosure";
 import { connect, useDispatch, useSelector } from 'react-redux';
 import './App.css';
@@ -17,9 +17,13 @@ import {
          FormControl,
          FormLabel,
          useToast,
-         Spinner
+         Spinner,
+         Alert,
+         AlertIcon,
+         Box,
+         ButtonGroup
         } from "@chakra-ui/core";
-import { fetchUsers, addUser, addUserInfo, cleanUserInfo, cleanCurrentUserInfo } from './redux/actions';
+import { fetchUsers, addUser, addUserInfo, cleanUserInfo, cleanCurrentUserInfo, createUser } from './redux/actions';
 
 
 function App(props) {
@@ -30,32 +34,54 @@ function App(props) {
   const { isOpen, open, close } = useDisclosure();
 
   const addingNewUserHandler = () => {
-    if(!props.addingUser.email || !props.addingUser.name || !props.addingUser.role|| !props.addingUser.picture) {
-      toast({
-        title: "Uncorrect adding",
-        description: "Fill in all fields for correct adding the new user, please",
-        status: "warning",
-        duration: 9000,
-        isClosable: true,
-      })
-  } else {
+  //   if(!props.addingUser.email || !props.addingUser.name || !props.addingUser.role|| !props.addingUser.picture) {
+  //     toast({
+  //       title: "Uncorrect adding",
+  //       description: "Fill in all fields for correct adding the new user, please",
+  //       status: "warning",
+  //       duration: 9000,
+  //       isClosable: true,
+  //     })
+  // } else {
 
-    dispatch(addUser(props.addingUser))
-      toast({
-        title: "User was added",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      })
-      setTimeout(() => {
-        document.location.pathname ='/'
-      }, 1500)
-  }}
+  //   dispatch(addUser(props.addingUser))
+  //     toast({
+  //       title: "User was added",
+  //       status: "success",
+  //       duration: 9000,
+  //       isClosable: true,
+  //     })
+  //     setTimeout(() => {
+  //       document.location.pathname ='/'
+  //     }, 1500)
+  // }
+  dispatch(createUser(props.addingUser));
 
+  }
+
+let content = null
+if (props.createUserFail.status) {
+  content = <Box bg="tomato" w="50%" p={4} color="white">
+  Uncorrect adding:<br/>
+  {props.createUserFail.message}
+</Box>
+  // toast({
+  //         title: "Uncorrect adding",
+  //         description: props.createUserFail.message,
+  //         status: "warning",
+  //         duration: 9000,
+  //         isClosable: true,
+  //       })
+}
+
+if (props.newUserWasAdded) {
+  window.location.reload()
+}
+console.log(props)
   useEffect(() => {
     dispatch(fetchUsers())
     dispatch(cleanCurrentUserInfo())
-  }, [])
+  }, [dispatch])
 if (props.loading) {
     return (
       <div className="App">
@@ -65,9 +91,15 @@ if (props.loading) {
             emptyColor="gray.200"
             color="blue.500"
             size="xl" />
-      </div>
-    )
-} 
+      </div>)
+      } else if (props.fetchError) {
+        return (
+          <div className="App">
+            <Alert status="error">
+              <AlertIcon />There was an error processing your request
+            </Alert>
+          </div>)
+      } 
   return (
 
       <div className="App">
@@ -134,6 +166,7 @@ if (props.loading) {
           </ModalBody>
 
           <ModalFooter>
+            {content}
             <Button variantColor="blue" mr={3} onClick={addingNewUserHandler}>
               Save
             </Button>
@@ -150,7 +183,10 @@ if (props.loading) {
 const mapStateToProps = state => {
   return {
     addingUser: state.addingUserInfo,
-    loading: state.loading
+    loading: state.loading,
+    fetchError: state.fetchError,
+    createUserFail: state.fetchAddNewUserError,
+    newUserWasAdded: state.newUserWasAdded
   }
 }
 export default connect(mapStateToProps)(App);
