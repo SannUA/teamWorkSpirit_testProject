@@ -31,14 +31,14 @@ import {
   FormLabel,
   Spinner,
 } from "@chakra-ui/core";
-import './User.css'
+import './User.css';
 import { currentUser, addUserInfo, editUserInfoInForm } from "./redux/actions";
 
 const User = (props) => {
 
   const dispatch = useDispatch()
   const { isOpen, open, close } = useDisclosure();
-
+  console.log(props)
   const initialRef = React.useRef();
   const finalRef = React.useRef();
   const toast = useToast();
@@ -56,7 +56,7 @@ const User = (props) => {
         isClosable: true,
       })
       setTimeout(() => {
-        document.location.pathname = '/'
+        props.history.replace('/')
       }, 1000)
     })
     .catch(e => {
@@ -85,7 +85,7 @@ const User = (props) => {
             role: props.usersEditingInfo.role,
             picture: props.usersEditingInfo.picture
         }).then(()=> {
-          window.location.reload()
+         dispatch(currentUser(id))
         })
         
       } catch (e) {

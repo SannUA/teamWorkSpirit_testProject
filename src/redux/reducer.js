@@ -43,46 +43,16 @@ export const reducer = (state = initialState, action) => {
                 role: action.payload.role,
                 picture: action.payload.picture
             },
-            // addingUserInfo: {
-            //     email: action.payload.email,
-            //     name: action.payload.name,
-            //     role: action.payload.role,
-            //     picture: action.payload.picture
-            // }
         }
         case ADDING_USER_INFO: 
-            switch(action.infoType){
-                case 'email': return {
-                    ...state, 
-                    addingUserInfo : {
-                        ...state.addingUserInfo,
-                        email: action.payload
-                    }
-                }
-                case 'name': return {
-                    ...state, 
-                    addingUserInfo : {
-                        ...state.addingUserInfo,
-                        name: action.payload
-                    }
-                }
-                case 'role': return {
-                    ...state, 
-                    addingUserInfo : {
-                        ...state.addingUserInfo,
-                        role: action.payload
-                    }
-                }
-                case 'picture': return {
-                    ...state, 
-                    addingUserInfo : {
-                        ...state.addingUserInfo,
-                        picture: action.payload
-                    }
-                }
-                
-                default: return state
-            }
+        return {
+            ...state, 
+                addingUserInfo : {
+                    ...state.addingUserInfo,
+                    [action.infoType]: action.payload
+                  }
+        }
+
         default: return state
     }
     
