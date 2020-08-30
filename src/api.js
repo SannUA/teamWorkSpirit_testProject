@@ -7,6 +7,7 @@ const instance =  axios.create({
 export default {
   fetchUsers: () => instance.get("/users"),
   getUser: (id) => instance.get(`/users/${id}`),
+  editUser: (id, data) => instance.put(`/users/${id}`, data),
   deleteUser: (id) => instance.delete(`/users/${id}`),
   createUser: (data) => instance.post("users", data)
 }

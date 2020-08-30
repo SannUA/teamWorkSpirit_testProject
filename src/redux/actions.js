@@ -1,14 +1,14 @@
-import api from "../api"
 import { 
-         ADDING_USER_INFO, 
-         CLEANING_USER_INFO, 
-         CURRENT_USER, 
-         CLEANING_CURRENT_USER_INFO,
-         EDIT_USER_INFO_IN_FORM, 
-         FETCH_USERS_REQUEST,
-         CREATE_USER_REQUEST,
-         FETCH_CURRENT_USER_REQUEST,
-         DELETE_CURRENT_USER_REQUEST} from "./types"
+  ADDING_USER_INFO, 
+  CLEANING_USER_INFO, 
+  CLEANING_CURRENT_USER_INFO,
+  EDIT_USER_INFO_IN_FORM, 
+  FETCH_USERS_REQUEST,
+  CREATE_USER_REQUEST,
+  FETCH_CURRENT_USER_REQUEST,
+  DELETE_CURRENT_USER_REQUEST,
+  EDIT_CURRENT_USER_REQUEST
+} from "./types"
 
 
 
@@ -31,14 +31,14 @@ export function deleteUser(id) {
     };
   }
 
-export function addUser(data) {
-    return async dispatch => {
-        await api.post("/users", data).then(() => {
-            fetchUsers()
-        } 
-        )
-    }
-}
+export function editUser(id, data) {
+    return {
+      type: EDIT_CURRENT_USER_REQUEST,
+      payload: id,
+      userData: data
+    };
+  }
+
 
 export function addUserInfo(infoType, info) {
     return {

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
-import api from "./api";
-import { Link } from 'react-router-dom'
-import { useDisclosure } from "react-use-disclosure"
+import { Link } from 'react-router-dom';
+import { useDisclosure } from "react-use-disclosure";
 import { useParams } from "react-router-dom";
 import { connect, useDispatch } from 'react-redux';
 import {FaTools} from "react-icons/fa";
@@ -31,40 +30,20 @@ import {
   FormLabel,
   Spinner,
 } from "@chakra-ui/core";
+import { currentUser, addUserInfo, editUserInfoInForm, deleteUser, editUser } from "./redux/actions";
 import './User.css';
-import { currentUser, addUserInfo, editUserInfoInForm, deleteUser } from "./redux/actions";
 
 const User = (props) => {
 
   const dispatch = useDispatch()
   const { isOpen, open, close } = useDisclosure();
-  console.log(props)
   const initialRef = React.useRef();
   const finalRef = React.useRef();
   const toast = useToast();
-
-
   const {id} = useParams();
 
   const deletingUserHandler = () => {
-
     dispatch(deleteUser(id))
-    // api.delete(`/users/${id}`)
-    // .then(() => {
-    //   toast({
-    //     title: "User was deleted",
-    //     status: "info",
-    //     duration: 9000,
-    //     isClosable: true,
-    //   })
-    //   setTimeout(() => {
-    //     props.history.replace('/')
-    //   }, 1000)
-    // })
-    // .catch(e => {
-    //   console.log(`😱 Axios request failed: ${e}`)
-    // })
-    
   }
 
   const formSubmitHandler = () => {
@@ -80,19 +59,12 @@ const User = (props) => {
         isClosable: true,
       })
     } else {
-      try {
-        api.put(`/users/${id}`, { 
+      dispatch(editUser(id, {
             email: props.usersEditingInfo.email,
             name: props.usersEditingInfo.name,
             role: props.usersEditingInfo.role,
             picture: props.usersEditingInfo.picture
-        }).then(()=> {
-         dispatch(currentUser(id))
-        })
-        
-      } catch (e) {
-        console.log(`😱 Axios request failed: ${e}`);
-      }
+      }))
       setTimeout(close, 500)
     }
   }

@@ -1,87 +1,56 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDisclosure } from "react-use-disclosure";
 import { connect, useDispatch, useSelector } from 'react-redux';
-import './App.css';
 import { Link } from 'react-router-dom';
 import { 
-         Avatar, 
-         Button,
-         Modal,
-         ModalOverlay,
-         ModalContent,
-         ModalHeader,
-         ModalFooter,
-         ModalBody,
-         ModalCloseButton,
-         Input,
-         FormControl,
-         FormLabel,
-         useToast,
-         Spinner,
-         Alert,
-         AlertIcon,
-         Box,
-         ButtonGroup
-        } from "@chakra-ui/core";
-import { fetchUsers, addUser, addUserInfo, cleanUserInfo, cleanCurrentUserInfo, createUser } from './redux/actions';
+  Avatar, 
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Input,
+  FormControl,
+  FormLabel,
+  Spinner,
+  Alert,
+  AlertIcon,
+  Box
+} from "@chakra-ui/core";
+import { fetchUsers, addUserInfo, cleanUserInfo, cleanCurrentUserInfo, createUser } from './redux/actions';
+import './App.css';
 
 
 function App(props) {
 
   const dispatch = useDispatch()
   const fetchedUsers = useSelector(state => state.users)
-  const toast = useToast();
   const { isOpen, open, close } = useDisclosure();
 
+
   const addingNewUserHandler = () => {
-  //   if(!props.addingUser.email || !props.addingUser.name || !props.addingUser.role|| !props.addingUser.picture) {
-  //     toast({
-  //       title: "Uncorrect adding",
-  //       description: "Fill in all fields for correct adding the new user, please",
-  //       status: "warning",
-  //       duration: 9000,
-  //       isClosable: true,
-  //     })
-  // } else {
-
-  //   dispatch(addUser(props.addingUser))
-  //     toast({
-  //       title: "User was added",
-  //       status: "success",
-  //       duration: 9000,
-  //       isClosable: true,
-  //     })
-  //     setTimeout(() => {
-  //       document.location.pathname ='/'
-  //     }, 1500)
-  // }
-  dispatch(createUser(props.addingUser));
-
+    dispatch(createUser(props.addingUser));
+    close()
   }
+
 
 let content = null
 if (props.createUserFail.status) {
   content = <Box bg="tomato" w="50%" p={4} color="white">
-  Uncorrect adding:<br/>
-  {props.createUserFail.message}
-</Box>
-  // toast({
-  //         title: "Uncorrect adding",
-  //         description: props.createUserFail.message,
-  //         status: "warning",
-  //         duration: 9000,
-  //         isClosable: true,
-  //       })
+              Uncorrect adding:<br/>
+              {props.createUserFail.message}
+            </Box>
 }
 
-if (props.newUserWasAdded) {
-  window.location.reload()
-}
-console.log(props)
   useEffect(() => {
     dispatch(fetchUsers())
     dispatch(cleanCurrentUserInfo())
   }, [dispatch])
+
+
 if (props.loading) {
     return (
       <div className="App">
@@ -96,12 +65,13 @@ if (props.loading) {
         return (
           <div className="App">
             <Alert status="error">
-              <AlertIcon />There was an error processing your request
+              <AlertIcon />There was an error processing your request. Try again later, please.
             </Alert>
           </div>)
       } 
-  return (
 
+
+  return (
       <div className="App">
         <div className='usersList'>
         {
@@ -123,7 +93,7 @@ if (props.loading) {
           marginBottom='10%'
           onClick={() => {
             dispatch(cleanUserInfo())
-            setTimeout(open)
+            open()
           }}>Add more User</Button>
            
            

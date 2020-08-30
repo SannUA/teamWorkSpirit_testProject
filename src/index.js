@@ -6,18 +6,17 @@ import { createStore, compose, applyMiddleware } from 'redux';
 import { reducer } from './redux/reducer';
 import { Provider } from 'react-redux';
 import createSagaMidleware from 'redux-saga';
-import thunk from 'redux-thunk';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-import User from './User';
 import rootSaga from './redux/sagasRoot';
+import * as serviceWorker from './serviceWorker';
+import App from './App';
+import User from './User';
+import './index.css';
 
 const saga = createSagaMidleware()
 
 const store = createStore(reducer, compose(
   applyMiddleware(
-    thunk, saga
+    saga
   ),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 ))
