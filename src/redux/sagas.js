@@ -50,10 +50,10 @@ function* createUserWorker(action) {
   } catch (e) {
 		if ([400, 403, 404, 405, 409, 410].includes(e.response.status)) {
 			yield put({ type: CREATE_USER_FAILURE, payload: {
-				message: 'There are some problems with your request'
+				
+				message: `There are some problems with your request: ${e.response.data.message}`,
 			}});
-		}
-    if ( e.response.status === 500) {
+		} else if ( e.response.status === 500) {
 			yield put({ type: CREATE_USER_FAILURE, payload: {
 				message: 'This e-mail is already signed, please select another one'
 			} });
@@ -77,7 +77,7 @@ function* fetchCurrentUserWorker(action) {
     const payload = yield api.getUser(action.payload);
 		yield put({ type: FETCH_CURRENT_USER_SUCCESS, payload: payload.data });
   } catch (e) {
-			yield put({ type: FETCH_CURRENT_USER_FAILURE, payload: e.response.data });
+			yield put({ type: FETCH_CURRENT_USER_FAILURE, payload: e.response.statusText });
 		}
 }
 
@@ -93,7 +93,7 @@ function* deleteCurrentUserWorker(action) {
     yield api.deleteUser(action.payload);
 		yield put({ type: DELETE_CURRENT_USER_SUCCESS});
   } catch (e) {
-			yield put({ type: DELETE_CURRENT_USER_FAILURE});
+			yield put({ type: DELETE_CURRENT_USER_FAILURE, payload: e.response.statusText});
 		}
 }
 
@@ -110,7 +110,12 @@ function* editCurrentUserWorker(action) {
 		yield put({ type: EDIT_CURRENT_USER_SUCCESS, payload: payload.data});
 		yield put({ type: FETCH_CURRENT_USER_REQUEST, payload: action.payload});
   } catch (e) {
-			yield put({ type: EDIT_CURRENT_USER_FAILURE, payload: e.response.data});
-		}
+		console.log(e.response)
+		if ( e.response.status === 500) {
+			yield put({ type: EDIT_CURRENT_USER_FAILURE, payload: 'This e-mail is already signed, please select another one'
+			 });
+		} else {
+			yield put({ type: EDIT_CURRENT_USER_FAILURE, payload: e.response.statusText});
+		}}
 }
 

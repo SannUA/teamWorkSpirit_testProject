@@ -29,8 +29,10 @@ import {
   FormControl,
   FormLabel,
   Spinner,
+  Alert,
+  AlertIcon
 } from "@chakra-ui/core";
-import { currentUser, addUserInfo, editUserInfoInForm, deleteUser, editUser } from "./redux/actions";
+import { currentUser, addUserInfo, editUserInfoInForm, deleteUser, editUser, editUserClearError } from "./redux/actions";
 import './User.css';
 
 const User = (props) => {
@@ -48,9 +50,7 @@ const User = (props) => {
 
   const formSubmitHandler = () => {
     if (!props.usersEditingInfo.email || 
-        !props.usersEditingInfo.name || 
-        !props.usersEditingInfo.role || 
-        !props.usersEditingInfo.picture) {
+        !props.usersEditingInfo.name ) {
       toast({
         title: "Uncorrect changes",
         description: "Fill in all fields for correct changes, please",
@@ -73,6 +73,26 @@ const User = (props) => {
     dispatch(currentUser(id))
   }, [dispatch, id])
 
+  let errorContent = null
+  if (props.fetchError.status) {
+  errorContent = 
+  <div className='errorMessage'>
+    <Alert status="error">
+      <AlertIcon />There was an error processing your request({props.fetchError.message}). Try again later, please.
+    </Alert>
+  </div>
+  
+}
+  let userWasntEdit = null
+  if (props.userWasntEditError.status) {
+    userWasntEdit = 
+    <div className='errorMessage'>
+      <Alert status="error">
+        <AlertIcon />User wasn't edit: ({props.userWasntEditError.message}).
+      </Alert>
+    </div>
+  
+  }
   if (!props.currentUserInfo.name) return (
     <div>
       <Spinner 
@@ -81,16 +101,30 @@ const User = (props) => {
         emptyColor="gray.200"
         color="blue.500"
         size="xl" />
+        {errorContent}
     </div>
 )
 if (props.userWasDeleted) {
   props.history.replace('/')
+}
+let userWasntDeleted = null;
+if (props.userWasntDeleteError.status) {
+  userWasntDeleted = 
+  <div className='errorMessage'>
+    <Alert status="error" >
+      <AlertIcon/>There was an error processing your request to delete user({props.userWasntDeleteError.message}). Try again later, please.
+    </Alert>
+  </div>
+  
 }
   return (
     <div className='userSinglePage'>
       <Link to='/'>
         <Icon name="arrow-left" size="32px" color="black" className='arrowBack'/>
       </Link>
+      {userWasntEdit}
+      {errorContent}
+      {userWasntDeleted}
       <h1>{props.currentUserInfo.email}</h1>
       <h2>{props.currentUserInfo.name}</h2>
       <h2>{props.currentUserInfo.role}</h2>
@@ -102,6 +136,7 @@ if (props.userWasDeleted) {
                 variant="outline" 
                 onClick={() => {
                   dispatch(editUserInfoInForm())
+                  dispatch(editUserClearError())
                   setTimeout(open)
                 }}>
         Edit
@@ -120,9 +155,10 @@ if (props.userWasDeleted) {
           Delete
           </Button>
         </PopoverContent>
-      </Popover> 
-    </ButtonGroup>
+      </Popover>
       
+    </ButtonGroup>
+   
       <Modal
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}
@@ -182,7 +218,10 @@ const mapStateToProps = state => {
   return {
     usersEditingInfo: state.addingUserInfo,
     currentUserInfo: state.currentUser,
-    userWasDeleted: state.userWasDeleted
+    userWasDeleted: state.userWasDeleted,
+    fetchError: state.fetchError,
+    userWasntDeleteError: state.userWasntDeletedError,
+    userWasntEditError: state.userWasntEditError
   }
 }
 export default connect(mapStateToProps)(User);

@@ -7,6 +7,10 @@
     font-weight: bold;
 }
 
+.errorMessage {
+    font-size: 20px;
+}
+
 .popoverText {
     font-size: 15px;
     font-weight: bold;

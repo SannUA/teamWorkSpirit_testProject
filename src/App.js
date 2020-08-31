@@ -20,7 +20,7 @@ import {
   AlertIcon,
   Box
 } from "@chakra-ui/core";
-import { fetchUsers, addUserInfo, cleanUserInfo, cleanCurrentUserInfo, createUser } from './redux/actions';
+import { fetchUsers, addUserInfo, cleanUserInfo, cleanCurrentUserInfo, createUser, wasAdded } from './redux/actions';
 import './App.css';
 
 
@@ -33,14 +33,19 @@ function App(props) {
 
   const addingNewUserHandler = () => {
     dispatch(createUser(props.addingUser));
-    close()
+    
   }
-
+  if (props.newUserWasAdded) {
+    setTimeout(() => {
+      close()
+    }, 500)
+    dispatch(wasAdded())
+  }
 
 let content = null
 if (props.createUserFail.status) {
   content = <Box bg="tomato" w="50%" p={4} color="white">
-              Uncorrect adding:<br/>
+              Uncorrect adding!<br/>
               {props.createUserFail.message}
             </Box>
 }

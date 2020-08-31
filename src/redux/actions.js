@@ -7,7 +7,9 @@ import {
   CREATE_USER_REQUEST,
   FETCH_CURRENT_USER_REQUEST,
   DELETE_CURRENT_USER_REQUEST,
-  EDIT_CURRENT_USER_REQUEST
+  EDIT_CURRENT_USER_REQUEST,
+  CREATE_USER_WAS_ADDED,
+  EDIT_CURRENT_USER_CLEAR_ERROR
 } from "./types"
 
 
@@ -17,10 +19,17 @@ export function fetchUsers() {
        type: FETCH_USERS_REQUEST
    }}
 
+ 
 export function createUser(data) {
     return {
       type: CREATE_USER_REQUEST,
       payload: data,
+    };
+  }
+
+export function wasAdded() {
+    return {
+      type: CREATE_USER_WAS_ADDED,
     };
   }
 
@@ -36,6 +45,12 @@ export function editUser(id, data) {
       type: EDIT_CURRENT_USER_REQUEST,
       payload: id,
       userData: data
+    };
+  }
+
+export function editUserClearError() {
+    return {
+      type: EDIT_CURRENT_USER_CLEAR_ERROR,
     };
   }
 
